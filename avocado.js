@@ -1,55 +1,83 @@
-exports.convert = function(str) {
-  var step1 = str.split(", ").join(",").split("for ").join(" ");
-  var step2 = step1.split(" ").join("");
-  var step3 = step2.split("R").join(",").split(",");
-console.log(step3);
-  priceIndex = step3;
-  return priceIndex;
+exports.mapping = function(str) {
+
+  var dealList = [];
+  var deals = str.split(", ");
+
+  for (x = 0; x < deals.length; x++) {
+    var dealDetails = deals[x].split(" for R");
+    dealList.push({
+      quantity: parseFloat(dealDetails[0]),
+      price: parseFloat(dealDetails[1]),
+      deal: deals[x]
+    });
+  }
+  return dealList;
 };
 
-exports.pricePerAvo = function(priceIndex) {
-  var data = [];
-  for (x = 0; x < priceIndex.length; x++) {
-    if (x % 2 === 0) {
-      var quantityVal = parseFloat(priceIndex[x]).toFixed(2);
-      var priceVal = parseFloat(priceIndex[x + 1]).toFixed(2);
-      data.push({
-        quantity: Number(quantityVal),
-        price: Number(priceVal)
-      });
-    }
-  }
+exports.pricePerAvo = function(dealList) {
   var singlePrices = [];
   var quantity = [];
   var price = [];
-  for (y = 0; y < data.length; y++) {
-    parseFloat(data.quantity);
-    parseFloat(data.price);
-    quantity.push(data[y].quantity);
-    price.push(data[y].price);
+  for (x = 0; x < dealList.length; x++) {
+    quantity.push(dealList[x].quantity);
+    price.push(dealList[x].price);
   }
-  for (z = 0; z < quantity.length; z++) {
-    var calc = price[z]/quantity[z];
+  for (z = 0; z < dealList.length; z++) {
+    var calc = price[z] / quantity[z];
     var decimals = calc.toFixed(2);
     var toNumber = Number(decimals);
     singlePrices.push(toNumber);
   }
   singlePrices.join(",").split(",");
-  sp = singlePrices;
+  var sp = singlePrices;
   return sp;
+};
 
+exports.cheapest = function(dealList, sp) {
+  var quantity = [];
+  var price = [];
+  var deal = [];
+  for (x = 0; x < dealList.length; x++) {
+    deal.push(dealList[x].deal);
+    quantity.push(dealList[x].quantity);
+    price.push(dealList[x].price);
+  }
+  var min = Math.min.apply(Math, sp).toFixed(2);
+  for (y = 0; y < sp.length; y++) {
+    if (sp[y] == min) {
+      return quantity[y] + " for R" + price[y];
+    }
+  }
 };
-exports.cheapest = function(sp) {
-  var min = Math.min.apply(Math, sp ).toFixed(2);
-  return "Cheapest deal: " + min;
-};
-exports.expensive = function(sp) {
+exports.expensive = function(dealList, sp) {
+  var quantity = [];
+  var price = [];
+  var deal = [];
+  for (x = 0; x < dealList.length; x++) {
+    deal.push(dealList[x].deal);
+    quantity.push(dealList[x].quantity);
+    price.push(dealList[x].price);
+  }
   var max = Math.max.apply(Math, sp).toFixed(2);
-  return "Most expensive deal: " + max;
+  for (y = 0; y < quantity.length; y++) {
+    if (sp[y] == max) {
+      return quantity[y] + " for " + "R" + price[y];
+    }
+  }
 };
-exports.average = function(sp) {
-  for(x = 0;x<sp.length;x++){
-    var sum = sp.reduce(function(a,b) {return a+b;});
+exports.average = function(dealList, sp) {
+  var quantity = [];
+  var price = [];
+  var deal = [];
+  for (x = 0; x < dealList.length; x++) {
+    deal.push(dealList[x].deal);
+    quantity.push(dealList[x].quantity);
+    price.push(dealList[x].price);
+  }
+  for (y = 0; y < sp.length; y++) {
+    var sum = sp.reduce(function(a, b) {
+      return a + b;
+    });
     var ave = sum / sp.length;
     return "The average price is: " + ave.toFixed(2);
   }
